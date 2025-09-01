@@ -2,6 +2,8 @@
 
 A browser-based 3D digital twin for smart room monitoring and control with real-time sensor simulation.
 
+🔗 **Live Demo**: [https://arunsai63.github.io/home-automation-digital-twin/](https://arunsai63.github.io/home-automation-digital-twin/)
+
 ## Overview
 
 This project implements a digital twin of a smart room using Three.js for 3D visualization and vanilla JavaScript for real-time sensor data simulation. It demonstrates IoT concepts without requiring actual hardware, making it ideal for prototyping, education, and showcasing smart building capabilities.
@@ -9,10 +11,21 @@ This project implements a digital twin of a smart room using Three.js for 3D vis
 ## Features
 
 ### 3D Environment
-- Interactive 3D room with furniture and appliances
-- Orbit camera controls for navigation
-- Dynamic lighting system
+- Interactive 3D room with colorful walls and textured ceiling
+- Seated human figures with subtle arm animations
+- Animated ceiling fan with real-time control
+- Orbit camera controls for navigation with optimized initial view
+- Dynamic lighting system with multiple scenes (Normal, Dimmed, Focus, Party)
 - Real-time visual feedback for all controls
+- Live camera position display
+
+### Smart Room Modes
+- **Home Mode** 🏠: Optimal comfort settings for daily use
+- **Away Mode** 🚪: Energy-saving mode with all devices off
+- **Sleep Mode** 🌙: Quiet environment with lights off and blinds closed
+- **Work Mode** 💼: Bright focused lighting with computer active
+- **Eco Mode** 🌱: Minimal energy consumption
+- **Party Mode** 🎉: Dynamic color-changing lights
 
 ### Sensor Simulation
 - Temperature monitoring (18-28°C)
@@ -23,17 +36,20 @@ This project implements a digital twin of a smart room using Three.js for 3D vis
 - Noise level monitoring (30-80 dB)
 
 ### Control Systems
-- Lighting control (room lights and desk lamp)
-- HVAC control with temperature adjustment
+- Smart lighting control with scene presets
+- HVAC control with temperature adjustment (16-30°C)
+- Animated ceiling fan with speed control
 - Window blinds operation
-- Device power management
+- Workstation power management
+- Climate control slider
 - Keyboard shortcuts for quick access
 
 ### Data Visualization
-- Real-time sensor displays
-- Historical trend charts
-- Threshold-based alerting
-- Performance metrics overlay
+- Real-time sensor displays with progress indicators
+- Historical trend charts with multiple metrics
+- Tab-based chart switching (Temperature, Humidity, CO2, Light)
+- Threshold-based alerting system
+- Performance metrics overlay (FPS, Memory, Particles)
 
 ## Installation
 
@@ -51,7 +67,7 @@ xdg-open index.html # Linux
 
 ## Usage
 
-### Keyboard Shortcuts
+#### Keyboard Shortcuts
 
 | Key | Function |
 |-----|----------|
@@ -59,6 +75,7 @@ xdg-open index.html # Linux
 | A | Toggle AC unit |
 | B | Toggle blinds |
 | C | Toggle computer |
+| F | Toggle ceiling fan |
 | R | Reset camera view |
 | P | Show performance metrics |
 
@@ -73,12 +90,12 @@ The application follows a modular architecture:
 
 ```
 app.js              - Application initialization and lifecycle
-room3d.js           - Three.js scene and 3D object management
+room3d.js           - Three.js scene, 3D objects, animations, and human figures
 sensors.js          - Sensor data simulation and threshold monitoring
-controls.js         - User interaction and device control logic
-charts.js           - Data visualization and charting
-style.css           - UI styling and animations
-index.html          - Application structure
+controls.js         - User interaction, device control, and smart automation
+charts.js           - Data visualization, charting, and performance metrics
+style.css           - Glass morphism UI, responsive design, and animations
+index.html          - Application structure with semantic HTML5
 ```
 
 ## Technical Stack
@@ -125,12 +142,24 @@ deskGroup.position.set(-1, 0, -2);
 chairGroup.position.set(-1, 0, -1);
 ```
 
+## Recent Updates
+
+- **Enhanced 3D Scene**: Added colorful walls with procedural textures, seated human figures with arm animations
+- **Ceiling Fan**: Animated ceiling fan with real-time control and default ON state
+- **Smart Modes**: Six preset modes for different scenarios (Home, Away, Sleep, Work, Eco, Party)
+- **UI Improvements**: Glass morphism design, improved toggle visibility, optimized panel layout
+- **Camera Display**: Live camera position tracking with low-opacity display
+- **GitHub Pages**: Deployed live demo for easy access
+- **Performance**: Optimized initial camera view for better room visibility
+
 ## Performance Considerations
 
 - Optimized render loop using requestAnimationFrame
 - Efficient particle system for AC airflow visualization
 - Throttled sensor updates to prevent excessive calculations
 - Memory-efficient data history management (60-second window)
+- Optimized human animations with minimal vertex updates
+- Smart resource management for texture and material loading
 
 ## Browser Support
 
