@@ -1,0 +1,401 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+    color: #333;
+}
+
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Status Bar */
+.status-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    z-index: 100;
+}
+
+.status-bar h1 {
+    font-size: 24px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background: #4caf50;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+}
+
+/* Panels */
+.panel {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.panel h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.panel h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #666;
+}
+
+/* Sensor Panel */
+.sensor-panel {
+    top: 80px;
+    left: 20px;
+    width: 320px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+.sensor-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.sensor-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.sensor-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.sensor-icon {
+    font-size: 24px;
+}
+
+.sensor-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.sensor-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sensor-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Control Panel */
+.control-panel {
+    top: 80px;
+    right: 20px;
+    width: 280px;
+}
+
+.control-grid {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Temperature Control */
+.temp-control {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.temp-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.temp-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: #ddd;
+    border-radius: 3px;
+    outline: none;
+}
+
+.temp-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#temp-setting {
+    font-size: 18px;
+    font-weight: 600;
+    min-width: 45px;
+}
+
+/* Charts Panel */
+.charts-panel {
+    bottom: 20px;
+    left: 20px;
+    right: 240px;
+    height: 250px;
+}
+
+.chart-container {
+    height: 180px;
+    position: relative;
+}
+
+/* Alert Container */
+#alert-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: 400px;
+}
+
+.alert {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+    pointer-events: auto;
+}
+
+.alert.warning {
+    border-left: 4px solid #ff9800;
+}
+
+.alert.danger {
+    border-left: 4px solid #f44336;
+}
+
+.alert.success {
+    border-left: 4px solid #4caf50;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .charts-panel {
+        right: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sensor-panel {
+        width: calc(100% - 40px);
+        top: auto;
+        bottom: 20px;
+        max-height: 200px;
+    }
+    
+    .control-panel {
+        width: calc(100% - 40px);
+        top: 80px;
+    }
+    
+    .charts-panel {
+        display: none;
+    }
+}
+
+/* Loading Animation */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: white;
+    z-index: 1000;
+}
+
+/* Keyboard Shortcuts Panel */
+.shortcuts-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    font-size: 12px;
+    max-width: 200px;
+}
+
+.shortcuts-panel h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.shortcut-key {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-family: monospace;
+    min-width: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.shortcut-desc {
+    flex: 1;
+    font-size: 11px;
+}

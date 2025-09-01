@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Room Digital Twin</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- OrbitControls for camera movement -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container"></div>
+    
+    <!-- Top Status Bar -->
+    <div class="status-bar">
+        <h1>🏢 Smart Room Digital Twin</h1>
+        <div class="connection-status">
+            <span class="status-dot"></span>
+            <span>Live Simulation Active</span>
+        </div>
+    </div>
+    
+    <!-- Sensor Data Panel -->
+    <div class="panel sensor-panel">
+        <h2>📊 Live Sensor Data</h2>
+        <div class="sensor-grid">
+            <div class="sensor-item">
+                <div class="sensor-icon">🌡️</div>
+                <div class="sensor-info">
+                    <span class="sensor-label">Temperature</span>
+                    <span class="sensor-value" id="temp-value">--°C</span>
+                </div>
+            </div>
+            <div class="sensor-item">
+                <div class="sensor-icon">💧</div>
+                <div class="sensor-info">
+                    <span class="sensor-label">Humidity</span>
+                    <span class="sensor-value" id="humidity-value">--%</span>
+                </div>
+            </div>
+            <div class="sensor-item">
+                <div class="sensor-icon">🌬️</div>
+                <div class="sensor-info">
+                    <span class="sensor-label">CO₂ Level</span>
+                    <span class="sensor-value" id="co2-value">-- ppm</span>
+                </div>
+            </div>
+            <div class="sensor-item">
+                <div class="sensor-icon">💡</div>
+                <div class="sensor-info">
+                    <span class="sensor-label">Light Level</span>
+                    <span class="sensor-value" id="light-value">-- lux</span>
+                </div>
+            </div>
+            <div class="sensor-item">
+                <div class="sensor-icon">👥</div>
+                <div class="sensor-info">
+                    <span class="sensor-label">Occupancy</span>
+                    <span class="sensor-value" id="occupancy-value">--</span>
+                </div>
+            </div>
+            <div class="sensor-item">
+                <div class="sensor-icon">🔊</div>
+                <div class="sensor-info">
+                    <span class="sensor-label">Noise Level</span>
+                    <span class="sensor-value" id="noise-value">-- dB</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Control Panel -->
+    <div class="panel control-panel">
+        <h2>🎛️ Room Controls</h2>
+        <div class="control-grid">
+            <div class="control-item">
+                <label class="switch">
+                    <input type="checkbox" id="lights-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Lights</span>
+            </div>
+            <div class="control-item">
+                <label class="switch">
+                    <input type="checkbox" id="ac-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>AC Unit</span>
+            </div>
+            <div class="control-item">
+                <label class="switch">
+                    <input type="checkbox" id="blinds-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Blinds Open</span>
+            </div>
+            <div class="control-item">
+                <label class="switch">
+                    <input type="checkbox" id="computer-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Computer</span>
+            </div>
+        </div>
+        
+        <div class="temp-control">
+            <h3>AC Temperature</h3>
+            <div class="temp-slider-container">
+                <input type="range" id="temp-slider" min="16" max="30" value="22" class="temp-slider">
+                <span id="temp-setting">22°C</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Panel -->
+    <div class="panel charts-panel">
+        <h2>📈 Historical Data (Last 60s)</h2>
+        <div class="chart-container">
+            <canvas id="sensor-chart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Alert Container -->
+    <div id="alert-container"></div>
+    
+    <!-- Keyboard Shortcuts Panel -->
+    <div class="shortcuts-panel">
+        <h3>⌨️ Shortcuts</h3>
+        <div class="shortcut-item">
+            <span class="shortcut-key">L</span>
+            <span class="shortcut-desc">Toggle Lights</span>
+        </div>
+        <div class="shortcut-item">
+            <span class="shortcut-key">A</span>
+            <span class="shortcut-desc">Toggle AC</span>
+        </div>
+        <div class="shortcut-item">
+            <span class="shortcut-key">B</span>
+            <span class="shortcut-desc">Toggle Blinds</span>
+        </div>
+        <div class="shortcut-item">
+            <span class="shortcut-key">C</span>
+            <span class="shortcut-desc">Computer On/Off</span>
+        </div>
+        <div class="shortcut-item">
+            <span class="shortcut-key">R</span>
+            <span class="shortcut-desc">Reset Camera</span>
+        </div>
+        <div class="shortcut-item">
+            <span class="shortcut-key">P</span>
+            <span class="shortcut-desc">Performance Stats</span>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="sensors.js"></script>
+    <script src="room3d.js"></script>
+    <script src="controls.js"></script>
+    <script src="charts.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
