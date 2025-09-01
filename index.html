@@ -151,6 +151,16 @@
                     </label>
                 </div>
             </div>
+            <div class="control-item">
+                <div class="control-icon">🌀</div>
+                <div class="control-info">
+                    <span class="control-label">Ceiling Fan</span>
+                    <label class="switch">
+                        <input type="checkbox" id="fan-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
         </div>
         
         <div class="temp-control">
@@ -194,6 +204,11 @@
     <!-- Alert Container -->
     <div id="alert-container"></div>
     
+    <!-- Camera Info Display -->
+    <div id="camera-info">
+        <div>Camera: <span id="camera-pos">Loading...</span></div>
+        <div>Target: <span id="target-pos">Loading...</span></div>
+    </div>
     
     <!-- Scripts -->
     <script src="sensors.js"></script>

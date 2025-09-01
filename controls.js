@@ -55,6 +55,24 @@ function initControls() {
         window.sensorAPI.adjustForControl('computer', controlState.computer);
         logControlChange('Computer', controlState.computer ? 'ON' : 'OFF');
     });
+    
+    // Ceiling fan toggle
+    const fanToggle = document.getElementById('fan-toggle');
+    fanToggle.checked = true; // Default to ON to match the 3D scene
+    fanToggle.addEventListener('change', (e) => {
+        const fanOn = e.target.checked;
+        if (room && room.fanOn !== undefined) {
+            room.fanOn = fanOn;
+        }
+        logControlChange('Ceiling Fan', fanOn ? 'ON' : 'OFF');
+        
+        // Adjust room temperature slightly when fan is on
+        if (fanOn) {
+            window.sensorAPI.adjustForControl('fan', true);
+        } else {
+            window.sensorAPI.adjustForControl('fan', false);
+        }
+    });
 
     // Temperature slider
     const tempSlider = document.getElementById('temp-slider');
@@ -231,8 +249,8 @@ function initKeyboardShortcuts() {
             case 'r':
                 // Reset camera view
                 if (camera && controls) {
-                    camera.position.set(8, 6, 8);
-                    controls.target.set(0, 0, 0);
+                    camera.position.set(6, 5, 7);
+                    controls.target.set(0, 1.5, 0);
                     controls.update();
                 }
                 break;
