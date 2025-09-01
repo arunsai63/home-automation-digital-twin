@@ -19,18 +19,48 @@
     <!-- 3D Canvas Container -->
     <div id="canvas-container"></div>
     
-    <!-- Top Status Bar -->
-    <div class="status-bar">
-        <h1>🏢 Smart Room Digital Twin</h1>
-        <div class="connection-status">
-            <span class="status-dot"></span>
-            <span>Live Simulation Active</span>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>Smart Room</h1>
         </div>
-    </div>
+        <div class="navbar-menu">
+            <div class="nav-modes">
+                <button class="mode-btn active" data-action="scene-home">
+                    <span class="mode-icon">🏠</span>
+                    <span class="mode-label">Home</span>
+                </button>
+                <button class="mode-btn" data-action="scene-away">
+                    <span class="mode-icon">🚪</span>
+                    <span class="mode-label">Away</span>
+                </button>
+                <button class="mode-btn" data-action="scene-sleep">
+                    <span class="mode-icon">🌙</span>
+                    <span class="mode-label">Sleep</span>
+                </button>
+                <button class="mode-btn" data-action="scene-work">
+                    <span class="mode-icon">💼</span>
+                    <span class="mode-label">Work</span>
+                </button>
+                <button class="mode-btn" data-action="energy-save">
+                    <span class="mode-icon">🌱</span>
+                    <span class="mode-label">Eco</span>
+                </button>
+                <button class="mode-btn" data-action="party">
+                    <span class="mode-icon">🎉</span>
+                    <span class="mode-label">Party</span>
+                </button>
+            </div>
+        </div>
+        <div class="navbar-status">
+            <span class="status-indicator active"></span>
+            <span class="status-text">Live</span>
+        </div>
+    </nav>
     
     <!-- Sensor Data Panel -->
     <div class="panel sensor-panel">
-        <h2>📊 Live Sensor Data</h2>
+        <h2>Live Sensors</h2>
         <div class="sensor-grid">
             <div class="sensor-item">
                 <div class="sensor-icon">🌡️</div>
@@ -79,50 +109,83 @@
     
     <!-- Control Panel -->
     <div class="panel control-panel">
-        <h2>🎛️ Room Controls</h2>
+        <h2>Controls</h2>
         <div class="control-grid">
             <div class="control-item">
-                <label class="switch">
-                    <input type="checkbox" id="lights-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span>Lights</span>
+                <div class="control-icon">💡</div>
+                <div class="control-info">
+                    <span class="control-label">Smart Lights</span>
+                    <label class="switch">
+                        <input type="checkbox" id="lights-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
             <div class="control-item">
-                <label class="switch">
-                    <input type="checkbox" id="ac-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span>AC Unit</span>
+                <div class="control-icon">❄️</div>
+                <div class="control-info">
+                    <span class="control-label">AC System</span>
+                    <label class="switch">
+                        <input type="checkbox" id="ac-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
             <div class="control-item">
-                <label class="switch">
-                    <input type="checkbox" id="blinds-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span>Blinds Open</span>
+                <div class="control-icon">🪟</div>
+                <div class="control-info">
+                    <span class="control-label">Smart Blinds</span>
+                    <label class="switch">
+                        <input type="checkbox" id="blinds-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
             <div class="control-item">
-                <label class="switch">
-                    <input type="checkbox" id="computer-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span>Computer</span>
+                <div class="control-icon">💻</div>
+                <div class="control-info">
+                    <span class="control-label">Workstation</span>
+                    <label class="switch">
+                        <input type="checkbox" id="computer-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
         </div>
         
         <div class="temp-control">
-            <h3>AC Temperature</h3>
+            <h3>🌡️ Climate Control</h3>
             <div class="temp-slider-container">
+                <span class="temp-min">16°</span>
                 <input type="range" id="temp-slider" min="16" max="30" value="22" class="temp-slider">
-                <span id="temp-setting">22°C</span>
+                <span class="temp-max">30°</span>
+                <div class="temp-display">
+                    <span id="temp-setting">22°C</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="lighting-control">
+            <h3>💡 Lighting Scenes</h3>
+            <div class="scene-buttons">
+                <button class="scene-btn active" data-scene="normal">Normal</button>
+                <button class="scene-btn" data-scene="dimmed">Dimmed</button>
+                <button class="scene-btn" data-scene="focus">Focus</button>
+                <button class="scene-btn" data-scene="party">Party</button>
             </div>
         </div>
     </div>
     
+
     <!-- Charts Panel -->
     <div class="panel charts-panel">
-        <h2>📈 Historical Data (Last 60s)</h2>
+        <h2>Analytics</h2>
+        <div class="chart-tabs">
+            <button class="chart-tab active" data-chart="temperature">Temperature</button>
+            <button class="chart-tab" data-chart="humidity">Humidity</button>
+            <button class="chart-tab" data-chart="co2">CO₂</button>
+            <button class="chart-tab" data-chart="light">Light</button>
+        </div>
         <div class="chart-container">
             <canvas id="sensor-chart"></canvas>
         </div>
@@ -131,34 +194,6 @@
     <!-- Alert Container -->
     <div id="alert-container"></div>
     
-    <!-- Keyboard Shortcuts Panel -->
-    <div class="shortcuts-panel">
-        <h3>⌨️ Shortcuts</h3>
-        <div class="shortcut-item">
-            <span class="shortcut-key">L</span>
-            <span class="shortcut-desc">Toggle Lights</span>
-        </div>
-        <div class="shortcut-item">
-            <span class="shortcut-key">A</span>
-            <span class="shortcut-desc">Toggle AC</span>
-        </div>
-        <div class="shortcut-item">
-            <span class="shortcut-key">B</span>
-            <span class="shortcut-desc">Toggle Blinds</span>
-        </div>
-        <div class="shortcut-item">
-            <span class="shortcut-key">C</span>
-            <span class="shortcut-desc">Computer On/Off</span>
-        </div>
-        <div class="shortcut-item">
-            <span class="shortcut-key">R</span>
-            <span class="shortcut-desc">Reset Camera</span>
-        </div>
-        <div class="shortcut-item">
-            <span class="shortcut-key">P</span>
-            <span class="shortcut-desc">Performance Stats</span>
-        </div>
-    </div>
     
     <!-- Scripts -->
     <script src="sensors.js"></script>

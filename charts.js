@@ -1,5 +1,6 @@
 // Data visualization with Chart.js
 let sensorChart;
+let currentChartType = 'temperature';
 
 function initCharts() {
     const ctx = document.getElementById('sensor-chart').getContext('2d');

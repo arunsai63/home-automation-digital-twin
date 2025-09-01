@@ -4,10 +4,16 @@ let controlState = {
     ac: false,
     blinds: true,
     computer: false,
-    acTemperature: 22
+    music: false,
+    security: false,
+    acTemperature: 22,
+    lightingScene: 'normal'
 };
 
 function initControls() {
+    // Initialize navbar panel switching
+    initNavbarPanelSwitching();
+    
     // Lights toggle
     const lightsToggle = document.getElementById('lights-toggle');
     lightsToggle.addEventListener('change', (e) => {
@@ -64,6 +70,47 @@ function initControls() {
 
     // Initialize temperature display
     tempSetting.textContent = controlState.acTemperature + '°C';
+
+    // Music and security toggles removed - controls not in HTML
+
+    // Lighting scene buttons
+    const sceneButtons = document.querySelectorAll('.scene-btn');
+    sceneButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const scene = e.target.getAttribute('data-scene');
+            setLightingScene(scene);
+            
+            // Update active button
+            sceneButtons.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+        });
+    });
+
+    // Mode buttons in navbar
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const action = e.target.closest('.mode-btn').getAttribute('data-action');
+            executeQuickAction(action);
+            
+            // Update active mode
+            modeButtons.forEach(b => b.classList.remove('active'));
+            e.target.closest('.mode-btn').classList.add('active');
+        });
+    });
+
+    // Chart tab buttons
+    const chartTabs = document.querySelectorAll('.chart-tab');
+    chartTabs.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const chartType = e.target.getAttribute('data-chart');
+            switchChart(chartType);
+            
+            // Update active tab
+            chartTabs.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+        });
+    });
 }
 
 function logControlChange(device, status) {
@@ -231,10 +278,165 @@ function initSmartAutomation() {
     }, 5000);
 }
 
+// New enhanced functions
+function setLightingScene(scene) {
+    controlState.lightingScene = scene;
+    
+    switch(scene) {
+        case 'normal':
+            updateRoomLighting(true);
+            lights.ceiling.intensity = 1;
+            break;
+        case 'dimmed':
+            updateRoomLighting(true);
+            lights.ceiling.intensity = 0.3;
+            break;
+        case 'focus':
+            updateRoomLighting(true);
+            lights.ceiling.intensity = 1.5;
+            lights.lamp.intensity = 1;
+            break;
+        case 'party':
+            updateRoomLighting(true);
+            lights.ceiling.intensity = 0.8;
+            // Add color cycling effect
+            startColorCycling();
+            break;
+    }
+    
+    logControlChange('Lighting Scene', scene.toUpperCase());
+}
+
+function executeQuickAction(action) {
+    switch(action) {
+        case 'scene-home':
+            // Home mode: lights on, AC comfortable, blinds open
+            document.getElementById('lights-toggle').checked = true;
+            document.getElementById('lights-toggle').dispatchEvent(new Event('change'));
+            document.getElementById('ac-toggle').checked = true;
+            document.getElementById('ac-toggle').dispatchEvent(new Event('change'));
+            document.getElementById('blinds-toggle').checked = true;
+            document.getElementById('blinds-toggle').dispatchEvent(new Event('change'));
+            logControlChange('Quick Action', 'HOME MODE ACTIVATED');
+            break;
+            
+        case 'scene-away':
+            // Away mode: everything off
+            document.getElementById('lights-toggle').checked = false;
+            document.getElementById('lights-toggle').dispatchEvent(new Event('change'));
+            document.getElementById('ac-toggle').checked = false;
+            document.getElementById('ac-toggle').dispatchEvent(new Event('change'));
+            document.getElementById('computer-toggle').checked = false;
+            document.getElementById('computer-toggle').dispatchEvent(new Event('change'));
+            logControlChange('Quick Action', 'AWAY MODE ACTIVATED');
+            break;
+            
+        case 'scene-sleep':
+            // Sleep mode: lights off, AC quiet, blinds closed
+            document.getElementById('lights-toggle').checked = false;
+            document.getElementById('lights-toggle').dispatchEvent(new Event('change'));
+            document.getElementById('blinds-toggle').checked = false;
+            document.getElementById('blinds-toggle').dispatchEvent(new Event('change'));
+            logControlChange('Quick Action', 'SLEEP MODE ACTIVATED');
+            break;
+            
+        case 'scene-work':
+            // Work mode: bright lights, computer on, focused environment
+            document.getElementById('lights-toggle').checked = true;
+            document.getElementById('lights-toggle').dispatchEvent(new Event('change'));
+            document.getElementById('computer-toggle').checked = true;
+            document.getElementById('computer-toggle').dispatchEvent(new Event('change'));
+            setLightingScene('focus');
+            logControlChange('Quick Action', 'WORK MODE ACTIVATED');
+            break;
+            
+        case 'energy-save':
+            // Eco mode: minimal energy usage
+            document.getElementById('lights-toggle').checked = false;
+            document.getElementById('lights-toggle').dispatchEvent(new Event('change'));
+            document.getElementById('ac-toggle').checked = false;
+            document.getElementById('ac-toggle').dispatchEvent(new Event('change'));
+            document.getElementById('computer-toggle').checked = false;
+            document.getElementById('computer-toggle').dispatchEvent(new Event('change'));
+            logControlChange('Quick Action', 'ECO MODE ACTIVATED');
+            break;
+            
+        case 'party':
+            // Party mode: colorful lights
+            document.getElementById('lights-toggle').checked = true;
+            document.getElementById('lights-toggle').dispatchEvent(new Event('change'));
+            setLightingScene('party');
+            logControlChange('Quick Action', 'PARTY MODE ACTIVATED');
+            break;
+    }
+}
+
+function switchChart(chartType) {
+    if (window.chartAPI && window.chartAPI.switchChart) {
+        window.chartAPI.switchChart(chartType);
+    }
+    logControlChange('Chart View', chartType.toUpperCase());
+}
+
+let colorCyclingInterval;
+function startColorCycling() {
+    if (colorCyclingInterval) {
+        clearInterval(colorCyclingInterval);
+    }
+    
+    colorCyclingInterval = setInterval(() => {
+        if (controlState.lightingScene === 'party' && controlState.lights) {
+            const hue = (Date.now() / 100) % 360;
+            const color = new THREE.Color().setHSL(hue / 360, 0.7, 0.6);
+            if (lights.ceiling) {
+                lights.ceiling.color = color;
+            }
+        } else {
+            clearInterval(colorCyclingInterval);
+            colorCyclingInterval = null;
+            // Reset to normal color
+            if (lights.ceiling) {
+                lights.ceiling.color = new THREE.Color(0xffffff);
+            }
+        }
+    }, 100);
+}
+
+// Update energy stats periodically
+function updateEnergyStats() {
+    const energyBars = document.querySelectorAll('.energy-fill');
+    const energyValues = document.querySelectorAll('.energy-value');
+    
+    // Simulate energy usage based on active devices
+    let lightingUsage = controlState.lights ? 2.1 + Math.random() * 0.5 : 0.1;
+    let coolingUsage = controlState.ac ? 4.5 + Math.random() * 1.0 : 0.2;
+    let electronicsUsage = controlState.computer ? 1.8 + Math.random() * 0.3 : 0.1;
+    
+    if (energyBars.length >= 3 && energyValues.length >= 3) {
+        energyBars[0].style.width = Math.min(100, (lightingUsage / 5) * 100) + '%';
+        energyBars[1].style.width = Math.min(100, (coolingUsage / 8) * 100) + '%';
+        energyBars[2].style.width = Math.min(100, (electronicsUsage / 4) * 100) + '%';
+        
+        energyValues[0].textContent = lightingUsage.toFixed(1) + ' kWh';
+        energyValues[1].textContent = coolingUsage.toFixed(1) + ' kWh';
+        energyValues[2].textContent = electronicsUsage.toFixed(1) + ' kWh';
+    }
+}
+
+// Start energy monitoring
+setInterval(updateEnergyStats, 2000);
+
+// Initialize navbar panel switching - simplified
+function initNavbarPanelSwitching() {
+    // No longer needed since modes are in navbar now
+}
+
 // Export control functions
 window.controlAPI = {
     init: initControls,
     initKeyboard: initKeyboardShortcuts,
     initAutomation: initSmartAutomation,
-    getState: () => controlState
+    getState: () => controlState,
+    setLightingScene: setLightingScene,
+    executeQuickAction: executeQuickAction
 };

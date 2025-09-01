@@ -5,8 +5,22 @@ let lights = {};
 function initThreeJS() {
     // Scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf0f0f0);
-    scene.fog = new THREE.Fog(0xf0f0f0, 10, 50);
+    
+    // Create gradient background
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 512;
+    canvas.height = 512;
+    
+    const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#e8f4fd');
+    gradient.addColorStop(1, '#f8fbff');
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    scene.background = texture;
+    scene.fog = new THREE.Fog(0xe8f4fd, 15, 60);
 
     // Camera
     camera = new THREE.PerspectiveCamera(
@@ -19,10 +33,13 @@ function initThreeJS() {
     camera.lookAt(0, 0, 0);
 
     // Renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    renderer.outputEncoding = THREE.sRGBEncoding;
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
     // Controls
@@ -61,11 +78,38 @@ function initThreeJS() {
 function createRoom() {
     const roomSize = { width: 8, height: 3, depth: 8 };
     
+    // Create procedural floor texture
+    const floorCanvas = document.createElement('canvas');
+    const floorContext = floorCanvas.getContext('2d');
+    floorCanvas.width = 512;
+    floorCanvas.height = 512;
+    
+    // Create wood-like pattern
+    floorContext.fillStyle = '#f5f0e8';
+    floorContext.fillRect(0, 0, floorCanvas.width, floorCanvas.height);
+    
+    // Add wood grain effect
+    for (let i = 0; i < 20; i++) {
+        floorContext.strokeStyle = `rgba(139, 69, 19, ${0.1 + Math.random() * 0.1})`;
+        floorContext.lineWidth = 1 + Math.random() * 2;
+        floorContext.beginPath();
+        floorContext.moveTo(0, i * 25);
+        floorContext.quadraticCurveTo(256, i * 25 + Math.random() * 10 - 5, 512, i * 25);
+        floorContext.stroke();
+    }
+    
+    const floorTexture = new THREE.CanvasTexture(floorCanvas);
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(4, 4);
+    
     // Floor
     const floorGeometry = new THREE.PlaneGeometry(roomSize.width, roomSize.depth);
-    const floorMaterial = new THREE.MeshLambertMaterial({ 
-        color: 0xe0e0e0,
-        side: THREE.DoubleSide 
+    const floorMaterial = new THREE.MeshStandardMaterial({ 
+        map: floorTexture,
+        roughness: 0.8,
+        metalness: 0.1,
+        side: THREE.DoubleSide
     });
     room.floor = new THREE.Mesh(floorGeometry, floorMaterial);
     room.floor.rotation.x = -Math.PI / 2;
@@ -84,10 +128,37 @@ function createRoom() {
     room.ceiling.position.y = roomSize.height;
     scene.add(room.ceiling);
 
+    // Create wall texture
+    const wallCanvas = document.createElement('canvas');
+    const wallContext = wallCanvas.getContext('2d');
+    wallCanvas.width = 256;
+    wallCanvas.height = 256;
+    
+    // Create subtle wall texture
+    wallContext.fillStyle = '#fafafa';
+    wallContext.fillRect(0, 0, wallCanvas.width, wallCanvas.height);
+    
+    // Add subtle noise
+    for (let i = 0; i < 100; i++) {
+        wallContext.fillStyle = `rgba(240, 240, 240, ${Math.random() * 0.3})`;
+        wallContext.fillRect(
+            Math.random() * wallCanvas.width,
+            Math.random() * wallCanvas.height,
+            2, 2
+        );
+    }
+    
+    const wallTexture = new THREE.CanvasTexture(wallCanvas);
+    wallTexture.wrapS = THREE.RepeatWrapping;
+    wallTexture.wrapT = THREE.RepeatWrapping;
+    wallTexture.repeat.set(2, 2);
+
     // Walls
-    const wallMaterial = new THREE.MeshLambertMaterial({ 
-        color: 0xf5f5f5,
-        side: THREE.DoubleSide 
+    const wallMaterial = new THREE.MeshStandardMaterial({ 
+        map: wallTexture,
+        roughness: 0.9,
+        metalness: 0.05,
+        side: THREE.DoubleSide
     });
 
     // Back wall
@@ -207,9 +278,35 @@ function createFurniture() {
     // Desk
     const deskGroup = new THREE.Group();
     
+    // Create desk texture
+    const deskCanvas = document.createElement('canvas');
+    const deskContext = deskCanvas.getContext('2d');
+    deskCanvas.width = 128;
+    deskCanvas.height = 128;
+    
+    // Create wood texture
+    deskContext.fillStyle = '#8b4513';
+    deskContext.fillRect(0, 0, deskCanvas.width, deskCanvas.height);
+    
+    // Add wood grain
+    for (let i = 0; i < 10; i++) {
+        deskContext.strokeStyle = `rgba(101, 67, 33, ${0.3 + Math.random() * 0.3})`;
+        deskContext.lineWidth = 1;
+        deskContext.beginPath();
+        deskContext.moveTo(0, i * 12);
+        deskContext.quadraticCurveTo(64, i * 12 + Math.random() * 4 - 2, 128, i * 12);
+        deskContext.stroke();
+    }
+    
+    const deskTexture = new THREE.CanvasTexture(deskCanvas);
+
     // Desk top
     const deskTopGeometry = new THREE.BoxGeometry(2, 0.05, 1);
-    const deskMaterial = new THREE.MeshLambertMaterial({ color: 0x8b4513 });
+    const deskMaterial = new THREE.MeshStandardMaterial({ 
+        map: deskTexture,
+        roughness: 0.7,
+        metalness: 0.1
+    });
     const deskTop = new THREE.Mesh(deskTopGeometry, deskMaterial);
     deskTop.position.y = 0.75;
     deskTop.castShadow = true;
